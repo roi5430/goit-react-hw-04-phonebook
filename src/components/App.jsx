@@ -6,12 +6,14 @@ import { Filter } from './Filter/Filter';
 
 export const App = () => {
   const [filter, setFilter] = useState('');
-  const [contacts, setContacts] = useState([
-    { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
-    { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
-    { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
-    { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
-  ]);
+  const [contacts, setContacts] = useState(() => {
+    const mekeContacts = localStorage.getItem('contacts');
+    if (mekeContacts !== null) {
+      const parse = JSON.parse(mekeContacts);
+      return parse;
+    }
+    return [];
+  });
 
   const searchContact = evt => setFilter(evt.currentTarget.value);
 
@@ -22,22 +24,18 @@ export const App = () => {
   };
 
   const addContact = (name, number) => {
-    const checkName = contacts
-      .map(contact => contact.name.toLowerCase())
-      .some(contact => contact === name.toLowerCase());
+    const checkName = contacts.some(contact => contact === name.toLowerCase());
     if (!checkName) {
-      setContacts(prevContact => [{ id: nanoid(), number, name }, ...contacts]);
+      setContacts(prevContact => [
+        { id: nanoid(), number, name },
+        ...prevContact,
+      ]);
     } else {
       window.alert(`${name} is already in contacts`);
     }
   };
 
   useEffect(() => {
-    const mekeContacts = JSON.parse(window.localStorage.getItem('contacts'));
-    if (mekeContacts !== null) {
-      setContacts(contacts);
-    }
-
     window.localStorage.setItem('contacts', JSON.stringify(contacts));
   }, [contacts]);
 

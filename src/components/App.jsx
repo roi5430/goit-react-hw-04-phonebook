@@ -24,7 +24,9 @@ export const App = () => {
   };
 
   const addContact = (name, number) => {
-    const checkName = contacts.some(contact => contact === name.toLowerCase());
+    const checkName = contacts.some(
+      contact => contact.name.toLowerCase() === name.toLowerCase()
+    );
     if (!checkName) {
       setContacts(prevContact => [
         { id: nanoid(), number, name },
